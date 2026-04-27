@@ -1,0 +1,59 @@
+# Python virtual environments
+venv/
+.venv/
+backend/.venv/
+
+# Python cache and test artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Environment files and local secrets
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Logs
+*.log
+logs/
+backend/logs/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+backend/chat_app_dev.db
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/tsconfig.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS and editor files
+.DS_Store
+.localized
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temporary/runtime files
+tmp/
+temp/
+uploads/
