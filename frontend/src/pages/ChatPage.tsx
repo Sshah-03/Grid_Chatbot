@@ -7,6 +7,7 @@ import {
   MessageSquarePlus,
   Search,
   Send,
+  Trash2,
   UserRoundCog,
 } from "lucide-react";
 import { searchUsers, updateMe } from "../api/auth";
@@ -14,6 +15,7 @@ import {
   addRoomMember,
   createInvite,
   createRoom,
+  deleteRoom,
   getMessages,
   getRoom,
   joinPublicRoom,
@@ -102,6 +104,15 @@ export function ChatPage() {
     if (userId === user?.id) return userUsername(user);
     const member = roomMembersById.get(userId);
     return userUsername(member) || userId;
+  }
+
+  function messageTime(createdAt: string) {
+    const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/.test(createdAt);
+    const timestamp = hasTimezone ? createdAt : `${createdAt}Z`;
+    return new Date(timestamp).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }
 
   function directPartner(room: Room) {
@@ -232,6 +243,17 @@ export function ChatPage() {
     await navigator.clipboard.writeText(inviteText(inviteCodeValue));
   }
 
+  async function deleteActiveGroup() {
+    if (!token || !activeRoom || activeRoom.type !== "group") return;
+    const confirmed = window.confirm(`Delete "${roomTitle(activeRoom)}"? This cannot be undone.`);
+    if (!confirmed) return;
+    await deleteRoom(token, activeRoom.id);
+    setMessages([]);
+    setCurrentInvite(null);
+    setActiveRoom(null);
+    await refreshRooms();
+  }
+
   async function joinInviteFromMessage(inviteCodeValue: string) {
     if (!token) return;
     const joined = await joinRoomByInvite(token, inviteCodeValue);
@@ -350,6 +372,7 @@ export function ChatPage() {
               title="Private group"
             >
               <Lock size={16} />
+              Private
             </button>
             <button
               type="button"
@@ -358,6 +381,7 @@ export function ChatPage() {
               title="Public group"
             >
               <Globe size={16} />
+              Public
             </button>
           </div>
           <button title="Create room">
@@ -424,7 +448,15 @@ export function ChatPage() {
               </small>
             )}
           </div>
-          <span className={`status ${status}`}>{status}</span>
+          <div className="panel-actions">
+            {activeRoom?.type === "group" && (
+              <button className="danger-button" onClick={deleteActiveGroup} title="Delete group">
+                <Trash2 size={17} />
+                Delete group
+              </button>
+            )}
+            <span className={`status ${status}`}>{status}</span>
+          </div>
         </header>
 
         {activeRoom?.type === "group" && (
@@ -477,7 +509,7 @@ export function ChatPage() {
                 </div>
               )}
               <time>
-                {new Date(message.created_at).toLocaleTimeString()}
+                {messageTime(message.created_at)}
                 {message.delivery_status === "pending" && " · pending"}
                 {message.delivery_status === "failed" && " · failed"}
               </time>

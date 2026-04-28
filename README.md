@@ -1,10 +1,10 @@
-# Grid Chatbot
+# 💬 Grid Chatbot
 
 Grid Chatbot is a full-stack realtime chat application built with FastAPI, React, native WebSockets, and MySQL. It supports username-based profiles, public and private group chats, direct messages, unread message indicators, invite links, optimistic message delivery states, and rich previews for public URLs including YouTube links.
 
 The project is designed as a practical chat platform: users can register, edit their visible profile, discover other users by username, create groups, invite members, and share links that become readable preview cards inside the conversation.
 
-## Highlights
+## ✨ Highlights
 
 | Area | What It Does |
 | --- | --- |
@@ -20,7 +20,7 @@ The project is designed as a practical chat platform: users can register, edit t
 | Persistence | MySQL stores users, sessions, rooms, messages, memberships, unread state, and link previews. |
 | Logging | JSON-style backend logging with auth audit events and safe credential handling. |
 
-## Tech Stack
+## 🧰 Tech Stack
 
 | Layer | Tools |
 | --- | --- |
@@ -31,7 +31,7 @@ The project is designed as a practical chat platform: users can register, edit t
 | HTTP scraping | `httpx` async client |
 | Testing | Pytest, pytest-asyncio, respx |
 
-## Functional Flow
+## 🔁 Functional Flow
 
 ```text
 User opens frontend
@@ -45,7 +45,7 @@ User opens frontend
   -> frontend updates message list, pending state, unread counts, and link previews
 ```
 
-## Messaging Flow
+## ⚡ Messaging Flow
 
 ```text
 Send message
@@ -59,7 +59,7 @@ Send message
   -> frontend replaces pending message with saved message
 ```
 
-## Project Structure
+## 🗂️ Project Structure
 
 ```text
 Grid_Chatbot/
@@ -86,9 +86,9 @@ Grid_Chatbot/
       utils/            small frontend helper functions
 ```
 
-## Core Features
+## 🚀 Core Features
 
-### User Accounts
+### 👤 User Accounts
 
 - Register with `email`, `username`, `password`, and optional `full_name`.
 - Log in with either username or email.
@@ -96,7 +96,7 @@ Grid_Chatbot/
 - Profile editor updates username, full name, and profile bio.
 - User search checks username, email, full name, and display name.
 
-### Direct Messages
+### 💌 Direct Messages
 
 - Search for another user by username.
 - Start a private one-to-one chat.
@@ -104,7 +104,7 @@ Grid_Chatbot/
 - DM header displays the selected user's visible profile identity.
 - Direct messages use the same clean message layout as group chats.
 
-### Public and Private Groups
+### 👥 Public and Private Groups
 
 - Public groups are visible to all users.
 - Private groups are visible only to members.
@@ -112,14 +112,14 @@ Grid_Chatbot/
 - Group owners can create and copy invite links.
 - Users can join groups from invite links.
 
-### Message State
+### 📬 Message State
 
 - Pending messages show while the WebSocket send is in progress.
 - Sent messages replace the pending local version when the server echoes them.
 - Failed messages are marked if the socket is unavailable.
 - Room and DM lists show unread message counts.
 
-### URL and YouTube Previews
+### 🔗 URL and YouTube Previews
 
 When a user sends a public URL, the backend attempts to create a preview:
 
@@ -141,7 +141,7 @@ www.github.com/owner/repo
 https://example.com/article
 ```
 
-## Backend Setup
+## 🛠️ Backend Setup
 
 From the project root:
 
@@ -177,7 +177,7 @@ Interactive API docs:
 http://localhost:8000/docs
 ```
 
-## Frontend Setup
+## 🎨 Frontend Setup
 
 Open a second terminal:
 
@@ -194,43 +194,9 @@ Frontend runs at:
 http://localhost:5173
 ```
 
-## Environment Variables
+## 🗄️ MySQL Notes
 
-### Backend
-
-File: `backend/.env`
-
-```env
-DATABASE_URL=mysql+asyncmy://chat_user:chat_pass@localhost:3306/chat_app
-TOKEN_TTL_SECONDS=86400
-TOKEN_SALT=change-me
-HTTPX_TIMEOUT_CONNECT=3.0
-HTTPX_TIMEOUT_READ=8.0
-RETRY_MAX_ATTEMPTS=3
-RETRY_BACKOFF_FACTOR=0.5
-RETRY_JITTER_SECONDS=0.2
-CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-LOG_LEVEL=INFO
-LOG_FILE_PATH=logs/app.log
-ENVIRONMENT=development
-```
-
-### Frontend
-
-File: `frontend/.env`
-
-```env
-VITE_API_BASE_URL=http://localhost:8000
-VITE_WS_BASE_URL=ws://localhost:8000
-```
-
-## MySQL Notes
-
-The app uses MySQL by default:
-
-```env
-DATABASE_URL=mysql+asyncmy://chat_user:chat_pass@localhost:3306/chat_app
-```
+The app uses MySQL by default. Local database connection settings are kept in ignored `.env` files, with safe examples available in the project `.env.example` files.
 
 In development, the backend creates and updates tables automatically on startup. For production, replace this with proper Alembic migrations before deploying.
 
@@ -242,7 +208,7 @@ python3 scripts/check_mysql_connection.py
 python3 scripts/migrate_sqlite_to_mysql.py
 ```
 
-## API Overview
+## 📡 API Overview
 
 ### Register
 
@@ -374,7 +340,7 @@ curl http://localhost:8000/rooms/$ROOM_ID/messages/export \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-## WebSocket Usage
+## 🔌 WebSocket Usage
 
 Connect:
 
@@ -417,7 +383,7 @@ Receive a saved message:
 }
 ```
 
-## Logging and Credentials
+## 🧾 Logging and Credentials
 
 Backend logs are written to:
 
@@ -429,7 +395,7 @@ The project logs important auth events such as registration, login, failed login
 
 Credentials are stored as hashed passwords in MySQL through the `users` table. Sessions are stored separately through the session model and expire based on `TOKEN_TTL_SECONDS`.
 
-## Development Commands
+## 🧪 Development Commands
 
 Backend:
 
@@ -449,7 +415,7 @@ npm run build
 npm run preview
 ```
 
-## Testing
+## ✅ Testing
 
 Run backend tests:
 
@@ -465,32 +431,10 @@ cd frontend
 npm run build
 ```
 
-## Suggested Next Improvements
+## 🎓 Internship Project Details
 
-- Add Alembic migrations for production-grade schema changes.
-- Add end-to-end tests for login, DM creation, group invite flow, and unread counts.
-- Move more UI sections from `ChatPage.tsx` into reusable components.
-- Add profile avatar support.
-- Add message edit/delete support.
-- Add typing indicators and online presence.
-- Add a queue/background worker for link previews so very slow URLs never delay message saving.
-
-## Current Status
-
-The application is usable locally with:
-
-```text
-Frontend: http://localhost:5173
-Backend:  http://localhost:8000
-Database: MySQL
-```
-
-Start MySQL, run the backend, run the frontend, register two users, then test:
-
-1. Update your profile username and full name.
-2. Search another user by username.
-3. Start a direct message.
-4. Create a public group.
-5. Create a private group and copy an invite link.
-6. Send a normal URL and a YouTube URL to confirm preview cards appear.
-# Grid_Chatbot
+| Detail | Information |
+| --- | --- |
+| Project Number | 2 |
+| My Role | Full Stack Developer Intern |
+| Focus | Building a realtime chat application with authentication, MySQL persistence, WebSocket messaging, public/private groups, direct messages, unread indicators, and rich URL previews. |

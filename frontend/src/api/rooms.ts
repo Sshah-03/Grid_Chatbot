@@ -30,6 +30,10 @@ export function getRoom(token: string, roomId: string, markRead = true) {
   return apiRequest<Room>(`/rooms/${roomId}?mark_read=${markRead}`, {}, token);
 }
 
+export function deleteRoom(token: string, roomId: string) {
+  return apiRequest<void>(`/rooms/${roomId}`, { method: "DELETE" }, token);
+}
+
 export function joinPublicRoom(token: string, roomId: string) {
   return apiRequest<Room>(`/rooms/${roomId}/join`, { method: "POST" }, token);
 }
