@@ -63,27 +63,31 @@ Send message
 
 ```text
 Grid_Chatbot/
-  backend/
-    app/
-      api/              REST and WebSocket route handlers
-      core/             config, logging, security, time helpers
-      db/               async SQLAlchemy engine/session setup
-      models/           SQLAlchemy ORM tables
-      schemas/          Pydantic request and response contracts
-      services/         business logic for auth, rooms, messages, integrations
-      websockets/       in-memory WebSocket connection manager
-    logs/               backend log output
-    scripts/            MySQL setup, migration, and connection helpers
-    tests/              backend tests
-  frontend/
-    src/
-      api/              typed REST client functions
-      components/       reusable React UI components
-      context/          auth state provider
-      hooks/            WebSocket connection hook
-      pages/            login and chat screens
-      types/            shared frontend TypeScript types
-      utils/            small frontend helper functions
+├── backend/
+│   ├── app/
+│   │   ├── api/              REST and WebSocket route handlers
+│   │   ├── core/             config, logging, security, time helpers
+│   │   ├── db/               async SQLAlchemy engine/session setup
+│   │   ├── models/           SQLAlchemy ORM tables
+│   │   ├── schemas/          Pydantic request and response contracts
+│   │   ├── services/         auth, rooms, messages, integrations
+│   │   └── websockets/       in-memory WebSocket connection manager
+│   ├── scripts/              MySQL setup, migration, connection helpers
+│   └── tests/                backend test suite
+├── frontend/
+│   ├── src/
+│   │   ├── api/              typed REST client functions
+│   │   ├── components/       reusable React UI components
+│   │   ├── context/          auth state provider
+│   │   ├── hooks/            WebSocket connection hook
+│   │   ├── pages/            login and chat screens
+│   │   ├── types/            shared TypeScript types
+│   │   └── utils/            frontend helper functions
+│   ├── package.json
+│   └── vite.config.ts
+├── requirements.txt
+├── README.md
+└── .gitignore
 ```
 
 ## 🚀 Core Features
@@ -206,181 +210,6 @@ Useful scripts:
 cd backend
 python3 scripts/check_mysql_connection.py
 python3 scripts/migrate_sqlite_to_mysql.py
-```
-
-## 📡 API Overview
-
-### Register
-
-```bash
-curl -X POST http://localhost:8000/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "username": "griduser",
-    "password": "StrongPassword123",
-    "full_name": "Grid User"
-  }'
-```
-
-### Login
-
-The `email` field accepts either email or username.
-
-```bash
-curl -X POST http://localhost:8000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "griduser",
-    "password": "StrongPassword123"
-  }'
-```
-
-### Update Profile
-
-```bash
-curl -X PATCH http://localhost:8000/auth/me \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "griduser",
-    "full_name": "Grid User",
-    "profile_bio": "Building realtime chat flows."
-  }'
-```
-
-### Search Users
-
-```bash
-curl "http://localhost:8000/auth/users/search?q=athorat" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Create a Public Group
-
-```bash
-curl -X POST http://localhost:8000/rooms \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Grid",
-    "type": "group",
-    "visibility": "public",
-    "member_ids": []
-  }'
-```
-
-### Create a Private Group
-
-```bash
-curl -X POST http://localhost:8000/rooms \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Private Grid",
-    "type": "group",
-    "visibility": "private",
-    "member_ids": []
-  }'
-```
-
-### Create a Direct Message Room
-
-```bash
-curl -X POST http://localhost:8000/rooms \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": null,
-    "type": "direct",
-    "visibility": "private",
-    "member_ids": ["OTHER_USER_ID"]
-  }'
-```
-
-### List Rooms
-
-```bash
-curl http://localhost:8000/rooms \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### List Public Groups
-
-```bash
-curl http://localhost:8000/rooms/public \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Create Invite Link
-
-```bash
-curl -X POST http://localhost:8000/rooms/$ROOM_ID/invite \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Join by Invite
-
-```bash
-curl -X POST http://localhost:8000/rooms/join/$INVITE_CODE \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Message History
-
-```bash
-curl "http://localhost:8000/rooms/$ROOM_ID/messages?limit=50" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Export Messages
-
-```bash
-curl http://localhost:8000/rooms/$ROOM_ID/messages/export \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-## 🔌 WebSocket Usage
-
-Connect:
-
-```text
-ws://localhost:8000/ws/rooms/{room_id}?token={session_token}
-```
-
-Send a message:
-
-```json
-{
-  "type": "message",
-  "body": "Look at this video https://youtu.be/example",
-  "client_message_id": "temporary-client-id"
-}
-```
-
-Receive a saved message:
-
-```json
-{
-  "type": "message_created",
-  "message": {
-    "id": "message-id",
-    "room_id": "room-id",
-    "user_id": "sender-id",
-    "body": "Look at this video https://youtu.be/example",
-    "created_at": "2026-04-27T10:00:00Z",
-    "link_previews": [
-      {
-        "url": "https://youtu.be/example",
-        "title": "Video title",
-        "description": "Video by Channel on YouTube",
-        "image_url": "https://...",
-        "site_name": "YouTube",
-        "status": "completed"
-      }
-    ]
-  }
-}
 ```
 
 ## 🧾 Logging and Credentials
