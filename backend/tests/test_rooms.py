@@ -119,3 +119,43 @@ async def test_direct_rooms_are_private_and_reused(client):
         },
     )
     assert invalid.status_code == 400
+
+
+async def test_group_member_can_delete_group_but_outsider_cannot(client):
+    owner = await register_user(client, "delete-owner@example.com", "deleteowner")
+    member = await register_user(client, "delete-member@example.com", "deletemember")
+    outsider = await register_user(client, "delete-outsider@example.com", "deleteoutsider")
+    owner_token, _ = await login_user(client, "deleteowner")
+    member_token, _ = await login_user(client, "deletemember")
+    outsider_token, _ = await login_user(client, "deleteoutsider")
+
+    group = await client.post(
+        "/rooms",
+        headers={"Authorization": f"Bearer {owner_token}"},
+        json={
+            "name": "Temporary Group",
+            "type": "group",
+            "visibility": "private",
+            "member_ids": [member["id"]],
+        },
+    )
+    assert group.status_code == 201, group.text
+    room_id = group.json()["id"]
+
+    outsider_delete = await client.delete(
+        f"/rooms/{room_id}",
+        headers={"Authorization": f"Bearer {outsider_token}"},
+    )
+    assert outsider_delete.status_code == 403
+
+    member_delete = await client.delete(
+        f"/rooms/{room_id}",
+        headers={"Authorization": f"Bearer {member_token}"},
+    )
+    assert member_delete.status_code == 204
+
+    deleted_room = await client.get(
+        f"/rooms/{room_id}",
+        headers={"Authorization": f"Bearer {owner_token}"},
+    )
+    assert deleted_room.status_code == 403

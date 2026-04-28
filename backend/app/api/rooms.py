@@ -118,6 +118,21 @@ async def get_room_endpoint(
     )
 
 
+@router.delete("/{room_id}", status_code=204)
+async def delete_group_endpoint(
+    room_id: str,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    room = await db.get(Room, room_id)
+    if not room or room.type != "group":
+        raise HTTPException(status_code=404, detail="Room not found")
+    if not await user_is_room_member(db, room_id, user.id):
+        raise HTTPException(status_code=403, detail="Only group members can delete this group")
+    await db.delete(room)
+    await db.commit()
+
+
 @router.post("/{room_id}/join", response_model=RoomResponse)
 async def join_public_group(
     room_id: str,
